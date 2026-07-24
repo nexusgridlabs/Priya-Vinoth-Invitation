@@ -31,13 +31,15 @@
 
   function tickAllCountdowns() {
     updateCountdown(RECEPTION_DATE, 'rcp');
+    updateCountdown(RECEPTION_DATE, 'r');
     updateCountdown(MARRIAGE_DATE, 'mar');
+    updateCountdown(MARRIAGE_DATE, 'm');
   }
 
   /* ── Envelope Open Logic ── */
   let opened = false;
 
-  function openEnvelope() {
+  function openEnvelope(instant) {
     if (opened) return;
     opened = true;
 
@@ -59,8 +61,7 @@
       window.weddingAudio.play();
     }
 
-    /* Reveal invitation content */
-    setTimeout(function () {
+    const revealContent = function () {
       const initial = document.getElementById('invite-initial');
       const details = document.getElementById('invite-details');
       const extras  = document.getElementById('post-hero-sections');
@@ -77,7 +78,42 @@
       if (typeof window.refreshScrollFade === 'function') {
         window.refreshScrollFade();
       }
-    }, 950);
+    };
+
+    /* Reveal invitation content */
+    if (instant === true) {
+      revealContent();
+    } else {
+      setTimeout(revealContent, 950);
+    }
+  }
+
+  /* ── Smooth Anchor Click & Auto-Open Handler ── */
+  function initAnchorLinks() {
+    document.querySelectorAll('a[href^="#"]').forEach(link => {
+      link.addEventListener('click', function (e) {
+        const href = this.getAttribute('href');
+        if (href && href.length > 1) {
+          if (!opened) {
+            openEnvelope(true);
+          }
+          const target = document.querySelector(href);
+          if (target) {
+            e.preventDefault();
+            target.scrollIntoView({ behavior: 'smooth' });
+          }
+        }
+      });
+    });
+
+    /* Auto-open if URL hash is present on load */
+    if (window.location.hash) {
+      openEnvelope(true);
+      const target = document.querySelector(window.location.hash);
+      if (target) {
+        setTimeout(() => target.scrollIntoView({ behavior: 'smooth' }), 100);
+      }
+    }
   }
 
   /* ── RSVP Form Handler ── */
@@ -100,11 +136,12 @@
   /* ── Initialize ── */
   document.addEventListener('DOMContentLoaded', function () {
     const seal = document.getElementById('env-seal');
-    if (seal) seal.addEventListener('click', openEnvelope);
+    if (seal) seal.addEventListener('click', () => openEnvelope(false));
 
     const openBtn = document.getElementById('open-btn');
-    if (openBtn) openBtn.addEventListener('click', openEnvelope);
+    if (openBtn) openBtn.addEventListener('click', () => openEnvelope(false));
 
+    initAnchorLinks();
     initRsvp();
     tickAllCountdowns();
   });
