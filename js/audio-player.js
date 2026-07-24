@@ -20,6 +20,7 @@
   if (isIndexPage) {
     sessionStorage.removeItem('wedding_music_time');
     sessionStorage.removeItem('wedding_music_state');
+    sessionStorage.removeItem('wedding_music_unlocked');
   }
 
   class WeddingAudioPlayer {
@@ -212,10 +213,16 @@
           document.removeEventListener(evt, tryPlay));
       };
       const p = this.audio.play();
+      // If we have previously unlocked autoplay, attempt immediate play without waiting
+      if (sessionStorage.getItem('wedding_music_unlocked') === 'true') {
+        // Playback may still be blocked; rely on play() handling
+      }
       if (p !== undefined) {
         p.then(() => {
-          this.isPlaying = true;
           this._updateUI();
+          this.isPlaying = true;
+          // Remember that autoplay was unlocked for future pages
+          sessionStorage.setItem('wedding_music_unlocked', 'true');
         }).catch(() => {
           // Still blocked — wait for next touch
           ['click','touchstart','pointerdown'].forEach(evt =>
@@ -226,18 +233,25 @@
 
     /* ── Autoplay attempt on page load ───────────────────── */
     _attemptAutoplay() {
-      if (this._userPaused) {
-        this.isPlaying = false;
-        this._updateUI();
-        return;
-      }
-      this._initAudioContext();
-      const p = this.audio.play();
-      if (p !== undefined) {
+    if (this._userPaused) {
+      this.isPlaying = false;
+      this._updateUI();
+      return;
+    }
+    this._initAudioContext();
+    // If we have previously unlocked autoplay, try to play immediately
+    if (sessionStorage.getItem('wedding_music_unlocked') === 'true') {
+      this.play();
+      return;
+    }
+    const p = this.audio.play();
+    if (p !== undefined) {
         p.then(() => {
           this._fadeIn();
           this.isPlaying = true;
           this._updateUI();
+          // Remember that autoplay was unlocked for future pages
+          sessionStorage.setItem('wedding_music_unlocked', 'true');
         }).catch(() => {
           this.isPlaying = false;
           this._updateUI();
@@ -259,6 +273,8 @@
           this.isPlaying = true;
           this._userPaused = false;
           this._updateUI();
+          // Remember that autoplay was unlocked for future pages
+          sessionStorage.setItem('wedding_music_unlocked', 'true');
         }).catch(() => {});
       }
     }
