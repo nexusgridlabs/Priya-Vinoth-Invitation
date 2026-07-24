@@ -34,9 +34,12 @@
 
     initSource() {
       this.audio.src = AUDIO_SOURCES[this.currentTrackIndex];
-      // Always start from the beginning on page load
-      this.audio.currentTime = 0;
-    }
+      
+ // Restore playback position if available in session
+      const savedTime = parseFloat(sessionStorage.getItem('wedding_music_time') || '0');
+      if (savedTime && !isNaN(savedTime)) {
+        this.audio.currentTime = savedTime;
+      }
 
     createFloatingUI() {
       // Find or create #music-player icon element
