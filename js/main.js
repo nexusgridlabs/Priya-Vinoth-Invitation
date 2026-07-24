@@ -72,6 +72,11 @@
       /* Start countdowns */
       tickAllCountdowns();
       setInterval(tickAllCountdowns, 1000);
+
+      /* Trigger scroll fade observer refresh for revealed elements */
+      if (typeof window.refreshScrollFade === 'function') {
+        window.refreshScrollFade();
+      }
     }, 950);
   }
 

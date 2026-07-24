@@ -44,8 +44,94 @@
     // Bind 3D mouse tilt handlers to cards
     init3DTilt();
 
+    // Initialize Scroll Fade In & Fade Out observer
+    initScrollFadeEffects();
+
     // Initial render
     onScroll();
+  }
+
+  /* ── High Performance Scrolling Fade In & Fade Out Engine ── */
+  let fadeObserver = null;
+
+  function initScrollFadeEffects() {
+    const fadeSelectors = [
+      'section:not(.hero-section)',
+      '.page-hero-content',
+      '.event-card',
+      '.venue-card',
+      '.wedding-card',
+      '.event-countdown-wrapper',
+      '.timeline-item',
+      '.wish-item',
+      'footer',
+      '.scroll-fade'
+    ].join(', ');
+
+    const elementsToFade = Array.from(document.querySelectorAll(fadeSelectors));
+
+    elementsToFade.forEach(el => {
+      if (!el.classList.contains('scroll-fade') && 
+          !el.classList.contains('scroll-fade-up') &&
+          !el.classList.contains('scroll-fade-down') &&
+          !el.classList.contains('scroll-fade-left') &&
+          !el.classList.contains('scroll-fade-right') &&
+          !el.classList.contains('scroll-fade-zoom')) {
+        el.classList.add('scroll-fade');
+      }
+    });
+
+    if (!('IntersectionObserver' in window)) {
+      elementsToFade.forEach(el => el.classList.add('scroll-visible'));
+      return;
+    }
+
+    if (fadeObserver) {
+      fadeObserver.disconnect();
+    }
+
+    fadeObserver = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('scroll-visible');
+        } else {
+          // Fade out when scrolling out of view
+          entry.target.classList.remove('scroll-visible');
+        }
+      });
+    }, {
+      root: null,
+      rootMargin: '-20px 0px -20px 0px',
+      threshold: 0.1
+    });
+
+    elementsToFade.forEach(el => {
+      fadeObserver.observe(el);
+      const rect = el.getBoundingClientRect();
+      if (rect.top < window.innerHeight && rect.bottom > 0) {
+        el.classList.add('scroll-visible');
+      }
+    });
+
+    // Global refresh function for dynamically revealed content
+    window.refreshScrollFade = function () {
+      const currentEls = Array.from(document.querySelectorAll(fadeSelectors));
+      currentEls.forEach(el => {
+        if (!el.classList.contains('scroll-fade') &&
+            !el.classList.contains('scroll-fade-up') &&
+            !el.classList.contains('scroll-fade-down') &&
+            !el.classList.contains('scroll-fade-left') &&
+            !el.classList.contains('scroll-fade-right') &&
+            !el.classList.contains('scroll-fade-zoom')) {
+          el.classList.add('scroll-fade');
+        }
+        if (fadeObserver) fadeObserver.observe(el);
+        const rect = el.getBoundingClientRect();
+        if (rect.top < window.innerHeight && rect.bottom > 0) {
+          el.classList.add('scroll-visible');
+        }
+      });
+    };
   }
 
   function createScrollProgressBar() {

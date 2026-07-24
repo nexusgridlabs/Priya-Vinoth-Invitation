@@ -11,7 +11,6 @@
   // Royalty-free traditional Indian wedding instrumental music sources
   // Path resolved relative to the HTML document location
   const AUDIO_SOURCES = [
-    'assets/music/A1.mp3',
     'assets/music/A2.mp3'
   ];
 
@@ -35,11 +34,8 @@
 
     initSource() {
       this.audio.src = AUDIO_SOURCES[this.currentTrackIndex];
-      // Restore playback position if available in session
-      const savedTime = parseFloat(sessionStorage.getItem('wedding_music_time') || '0');
-      if (savedTime && !isNaN(savedTime)) {
-        this.audio.currentTime = savedTime;
-      }
+      // Always start from the beginning on page load
+      this.audio.currentTime = 0;
     }
 
     createFloatingUI() {
@@ -107,12 +103,7 @@
         }
       });
 
-      // Save time before unload for seamless page transitions
-      window.addEventListener('beforeunload', () => {
-        if (this.audio && !isNaN(this.audio.currentTime)) {
-          sessionStorage.setItem('wedding_music_time', this.audio.currentTime.toString());
-        }
-      });
+      // Note: Playback time is NOT saved — audio always restarts from beginning on reload
 
       // User interaction listener for browser autoplay restriction
       const unlockAudio = () => {
