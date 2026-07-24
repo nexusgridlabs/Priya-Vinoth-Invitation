@@ -8,10 +8,11 @@
 (function () {
   'use strict';
 
-  // Royalty-free traditional Indian wedding instrumental music sources (Nadaswaram / Flute / Sitar ambient)
+  // Royalty-free traditional Indian wedding instrumental music sources
+  // Path resolved relative to the HTML document location
   const AUDIO_SOURCES = [
-    '../assets/music/A1.mp3',
-    '../assets/music/A2.mp3'
+    'assets/music/A1.mp3',
+    'assets/music/A2.mp3'
   ];
 
   class WeddingAudioPlayer {
@@ -94,9 +95,16 @@
         sessionStorage.setItem('wedding_music_state', 'paused');
       });
 
-      this.audio.addEventListener('error', () => {
-        console.warn('Audio URL loading error, switching source or fallback...');
-        this.fallbackToSynth();
+      this.audio.addEventListener('error', (err) => {
+        console.warn('Audio URL loading error on path:', this.audio.src, err);
+        // Try track 2 if track 1 fails, otherwise fallback to web audio synth
+        if (this.currentTrackIndex < AUDIO_SOURCES.length - 1) {
+          this.currentTrackIndex++;
+          this.audio.src = AUDIO_SOURCES[this.currentTrackIndex];
+          this.audio.play().catch(() => this.fallbackToSynth());
+        } else {
+          this.fallbackToSynth();
+        }
       });
 
       // Save time before unload for seamless page transitions
@@ -112,12 +120,14 @@
         if (desiredState !== 'paused' && !this.isPlaying) {
           this.playAudio();
         }
-        document.removeEventListener('click', unlockAudio);
-        document.removeEventListener('touchstart', unlockAudio);
+        ['click', 'touchstart', 'pointerdown', 'keydown', 'scroll'].forEach(evt => {
+          document.removeEventListener(evt, unlockAudio);
+        });
       };
 
-      document.addEventListener('click', unlockAudio, { once: true });
-      document.addEventListener('touchstart', unlockAudio, { once: true });
+      ['click', 'touchstart', 'pointerdown', 'keydown', 'scroll'].forEach(evt => {
+        document.addEventListener(evt, unlockAudio, { once: true, passive: true });
+      });
     }
 
     attemptAutoplay() {

@@ -326,12 +326,19 @@ body {
 
 .hero-bg {
   position: absolute;
-  inset: 0;
+  inset: -10% 0 -10% 0;
   background-size: cover;
   background-position: center;
   filter: blur(2px) brightness(0.9);
   opacity: 0.25;
   z-index: 0;
+  will-change: transform;
+}
+
+.parallax-card {
+  will-change: transform;
+  transform-style: preserve-3d;
+  transition: box-shadow 0.3s ease, border-color 0.3s ease;
 }
 
 .hero-overlay {
