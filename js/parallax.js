@@ -65,7 +65,13 @@
       '.timeline-item',
       '.wish-item',
       'footer',
-      '.scroll-fade'
+      '.scroll-fade',
+      '.scroll-fade-up',
+      '.scroll-fade-down',
+      '.scroll-fade-left',
+      '.scroll-fade-right',
+      '.scroll-fade-zoom',
+      '.countdown-box'
     ].join(', ');
 
     const elementsToFade = Array.from(document.querySelectorAll(fadeSelectors));

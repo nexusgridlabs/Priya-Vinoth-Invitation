@@ -143,6 +143,9 @@
 
     initAnchorLinks();
     initRsvp();
+    
+    /* Start continuous countdown timer */
     tickAllCountdowns();
+    setInterval(tickAllCountdowns, 1000);
   });
 })();
