@@ -56,7 +56,7 @@
 
     /* Trigger audio playback if audio player is ready */
     if (window.weddingAudio) {
-      window.weddingAudio.playAudio();
+      window.weddingAudio.play();
     }
 
     /* Reveal invitation content */

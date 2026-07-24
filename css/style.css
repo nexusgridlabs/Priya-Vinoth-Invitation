@@ -634,7 +634,37 @@ body {
   position: relative;
   z-index: 2;
   max-width: 800px;
+  width: 100%;
   padding: 3rem 1.5rem;
+  box-sizing: border-box;
+}
+
+/* ── Marriage Page – Date Badge (responsive) ── */
+.marriage-date-badge {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 1rem 2rem;
+  border-radius: 16px;
+  background: rgba(74, 16, 25, 0.82);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1.5px solid var(--gold);
+  max-width: 100%;
+  box-sizing: border-box;
+  text-align: center;
+}
+
+@media (max-width: 480px) {
+  .marriage-date-badge {
+    padding: 0.85rem 1.25rem;
+    width: 100%;
+    border-radius: 12px;
+  }
+  .marriage-date-badge .font-body.fs-4 {
+    font-size: 1rem !important;
+  }
 }
 
 /* ── Ritual & Event Timeline ── */
@@ -938,26 +968,23 @@ body {
   transform: translateY(0) scale(1);
 }
 
-/* Fade Direction Variants */
-.scroll-fade-up {
-  transform: translateY(45px);
-}
-
-.scroll-fade-down {
-  transform: translateY(-45px);
-}
-
-.scroll-fade-left {
-  transform: translateX(-45px);
-}
-
-.scroll-fade-right {
-  transform: translateX(45px);
-}
-
+/* Fade Direction Variants – all start invisible */
+.scroll-fade-up,
+.scroll-fade-down,
+.scroll-fade-left,
+.scroll-fade-right,
 .scroll-fade-zoom {
-  transform: scale(0.92);
+  opacity: 0;
+  transition: opacity 0.75s cubic-bezier(0.16, 1, 0.3, 1),
+              transform 0.75s cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: opacity, transform;
 }
+
+.scroll-fade-up    { transform: translateY(45px); }
+.scroll-fade-down  { transform: translateY(-45px); }
+.scroll-fade-left  { transform: translateX(-45px); }
+.scroll-fade-right { transform: translateX(45px); }
+.scroll-fade-zoom  { transform: scale(0.92); }
 
 .scroll-fade-up.scroll-visible,
 .scroll-fade-down.scroll-visible,

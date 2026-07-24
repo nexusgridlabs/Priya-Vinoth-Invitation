@@ -1,77 +1,116 @@
 /* ============================================================
-   audio-player.js – Wedding Invitation Audio Engine
-   ● Handles background wedding music across all pages
-   ● Autoplay on page entry with fallback for browser policies
-   ● Continuous playback across pages (marriage / reception)
-   ● Restarts from beginning every time index.html is (re)loaded
+   audio-player.js – Wedding Invitation Audio Engine  v3
+   ● Seamless playback across page navigations (mobile + desktop)
+   ● Handles bfcache (iOS Safari back/forward swipe)
+   ● Smooth volume fade-in on page entry (no pop / lag)
+   ● Restarts from beginning every time index.html is loaded
    ============================================================ */
 
 (function () {
   'use strict';
 
-  // Audio source – path is relative to the HTML document location
-  const AUDIO_SOURCES = [
-    'assets/music/A2.mp3'
-  ];
+  const AUDIO_SRC = 'assets/music/A2.mp3';
+  const FADE_DURATION = 0.6; // seconds for volume fade-in
 
-  // ── Detect which page we're on ──────────────────────────────
+  // ── Detect current page ───────────────────────────────────
   const currentPage = window.location.pathname.split('/').pop() || 'index.html';
   const isIndexPage = currentPage === '' || currentPage === 'index.html';
 
-  // If we're on the index page, wipe any saved playback position
-  // so the song always starts from the very beginning on reload.
+  // On the index page always wipe saved position so it restarts
   if (isIndexPage) {
     sessionStorage.removeItem('wedding_music_time');
+    sessionStorage.removeItem('wedding_music_state');
   }
 
   class WeddingAudioPlayer {
     constructor() {
-      this.audio = new Audio();
-      this.audio.loop = false;       // false – we manage end-of-track ourselves
+      this.audio       = new Audio();
+      this.audio.loop  = false;
       this.audio.preload = 'auto';
-      this.isPlaying = false;
-      this.currentTrackIndex = 0;
-      this.webAudioSynth = null;
-      this.audioCtx = null;
 
-      this.initSource();
-      this.createFloatingUI();
-      this.bindEvents();
+      // Mute initially; we fade in via Web Audio API to avoid pop
+      this.audioCtx    = null;
+      this.gainNode    = null;
+      this.sourceNode  = null;
 
-      // Auto-start check
-      this.attemptAutoplay();
+      this.isPlaying   = false;
+      this._userPaused = sessionStorage.getItem('wedding_music_state') === 'paused';
+
+      this._setupAudio();
+      this._createUI();
+      this._bindEvents();
+      this._attemptAutoplay();
     }
 
-    initSource() {
-      this.audio.src = AUDIO_SOURCES[this.currentTrackIndex];
+    /* ── Audio setup ─────────────────────────────────────── */
+    _setupAudio() {
+      this.audio.src = AUDIO_SRC;
 
-      if (isIndexPage) {
-        // Always restart from the beginning on the index page
-        this.audio.currentTime = 0;
-      } else {
-        // Restore playback position saved when the user left the previous page
-        const savedTime = parseFloat(sessionStorage.getItem('wedding_music_time') || '0');
-        if (!isNaN(savedTime) && savedTime > 0) {
-          // Set after metadata loads (required in some browsers)
+      // Restore saved playback position for non-index pages
+      if (!isIndexPage) {
+        const saved = parseFloat(sessionStorage.getItem('wedding_music_time') || '0');
+        if (!isNaN(saved) && saved > 0) {
+          // Try immediately (works if metadata already cached)
+          this.audio.currentTime = saved;
+          // Also set once metadata is available (guaranteed fallback)
           this.audio.addEventListener('loadedmetadata', () => {
-            this.audio.currentTime = savedTime;
+            if (Math.abs(this.audio.currentTime - saved) > 1) {
+              this.audio.currentTime = saved;
+            }
           }, { once: true });
-          // Also set directly; works when metadata is already cached
-          this.audio.currentTime = savedTime;
         }
       }
     }
 
-    createFloatingUI() {
-      // Find or create #music-player icon element
-      let playerContainer = document.getElementById('music-player');
-      if (!playerContainer) {
-        playerContainer = document.createElement('div');
-        playerContainer.id = 'music-player';
-        playerContainer.setAttribute('role', 'button');
-        playerContainer.setAttribute('aria-label', 'Toggle background music');
-        playerContainer.setAttribute('tabindex', '0');
-        playerContainer.innerHTML = `
+    /* ── Web Audio context for smooth gain control ────────── */
+    _initAudioContext() {
+      if (this.audioCtx) return;
+      try {
+        const AC = window.AudioContext || window.webkitAudioContext;
+        if (!AC) return;
+        this.audioCtx = new AC();
+        this.gainNode = this.audioCtx.createGain();
+        this.gainNode.gain.value = 0; // start silent, fade in
+        this.gainNode.connect(this.audioCtx.destination);
+
+        // Connect the <audio> element as a MediaElementSource
+        this.sourceNode = this.audioCtx.createMediaElementSource(this.audio);
+        this.sourceNode.connect(this.gainNode);
+      } catch (e) {
+        console.warn('WebAudio init failed, falling back to direct audio:', e);
+        this.audioCtx = null;
+        this.gainNode = null;
+      }
+    }
+
+    _fadeIn() {
+      if (this.gainNode && this.audioCtx) {
+        const now = this.audioCtx.currentTime;
+        this.gainNode.gain.cancelScheduledValues(now);
+        this.gainNode.gain.setValueAtTime(this.gainNode.gain.value, now);
+        this.gainNode.gain.linearRampToValueAtTime(1, now + FADE_DURATION);
+      }
+    }
+
+    _fadeOut(duration = 0.3) {
+      if (this.gainNode && this.audioCtx) {
+        const now = this.audioCtx.currentTime;
+        this.gainNode.gain.cancelScheduledValues(now);
+        this.gainNode.gain.setValueAtTime(this.gainNode.gain.value, now);
+        this.gainNode.gain.linearRampToValueAtTime(0.001, now + duration);
+      }
+    }
+
+    /* ── Floating music icon UI ───────────────────────────── */
+    _createUI() {
+      let container = document.getElementById('music-player');
+      if (!container) {
+        container = document.createElement('div');
+        container.id = 'music-player';
+        container.setAttribute('role', 'button');
+        container.setAttribute('aria-label', 'Toggle background music');
+        container.setAttribute('tabindex', '0');
+        container.innerHTML = `
           <div id="music-bars">
             <div class="mbar paused"></div>
             <div class="mbar paused"></div>
@@ -80,218 +119,190 @@
             <div class="mbar paused"></div>
           </div>
         `;
-        document.body.appendChild(playerContainer);
+        document.body.appendChild(container);
       }
-
-      this.musicPlayer = playerContainer;
-      this.musicBars = playerContainer.querySelectorAll('.mbar');
+      this._playerEl = container;
+      this._bars     = container.querySelectorAll('.mbar');
     }
 
-    bindEvents() {
-      // Play/Pause Click & Keyboard Listener on #music-player icon
-      if (this.musicPlayer) {
-        this.musicPlayer.addEventListener('click', (e) => {
-          e.stopPropagation();
-          this.togglePlay();
-        });
-        this.musicPlayer.addEventListener('keydown', (e) => {
-          if (e.key === 'Enter' || e.key === ' ') {
-            e.preventDefault();
-            this.togglePlay();
-          }
-        });
-      }
+    /* ── Event wiring ─────────────────────────────────────── */
+    _bindEvents() {
+      // Toggle click / keyboard
+      this._playerEl.addEventListener('click',   (e) => { e.stopPropagation(); this.toggle(); });
+      this._playerEl.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); this.toggle(); }
+      });
 
-      // Audio event listeners
+      // Sync UI with native audio events
       this.audio.addEventListener('play', () => {
         this.isPlaying = true;
-        this.updateUIState();
+        this._updateUI();
         sessionStorage.setItem('wedding_music_state', 'playing');
       });
-
       this.audio.addEventListener('pause', () => {
         this.isPlaying = false;
-        this.updateUIState();
-        sessionStorage.setItem('wedding_music_state', 'paused');
+        this._updateUI();
+        if (!this._navigating) {
+          sessionStorage.setItem('wedding_music_state', 'paused');
+        }
       });
-
-      // When the track ends, loop it back to the start
       this.audio.addEventListener('ended', () => {
         this.audio.currentTime = 0;
         this.audio.play().catch(() => {});
       });
-
-      this.audio.addEventListener('error', (err) => {
-        console.warn('Audio URL loading error on path:', this.audio.src, err);
-        // Try next track if available, otherwise fall back to web-audio synth
-        if (this.currentTrackIndex < AUDIO_SOURCES.length - 1) {
-          this.currentTrackIndex++;
-          this.audio.src = AUDIO_SOURCES[this.currentTrackIndex];
-          this.audio.play().catch(() => this.fallbackToSynth());
-        } else {
-          this.fallbackToSynth();
-        }
+      this.audio.addEventListener('error', () => {
+        console.warn('Audio error – src:', this.audio.src);
       });
 
-      // ── Save playback position before the user leaves the page ──
-      // 'pagehide' is the most reliable event on mobile & modern browsers.
-      // 'beforeunload' is a reliable fallback for desktop browsers.
-      const saveTime = () => {
+      // ── Save position reliably before leaving the page ────
+      // pagehide fires on mobile (iOS bfcache too) and desktop
+      const saveState = () => {
+        this._navigating = true;
         if (this.audio && !this.audio.ended) {
           sessionStorage.setItem('wedding_music_time', String(this.audio.currentTime));
         }
-      };
-      window.addEventListener('pagehide', saveTime);
-      window.addEventListener('beforeunload', saveTime);
-
-      // ── User interaction listener for browser autoplay restriction ──
-      const unlockAudio = () => {
-        const desiredState = sessionStorage.getItem('wedding_music_state');
-        if (desiredState !== 'paused' && !this.isPlaying) {
-          this.playAudio();
-        }
-        ['click', 'touchstart', 'pointerdown', 'keydown', 'scroll'].forEach(evt => {
-          document.removeEventListener(evt, unlockAudio);
-        });
-      };
-
-      ['click', 'touchstart', 'pointerdown', 'keydown', 'scroll'].forEach(evt => {
-        document.addEventListener(evt, unlockAudio, { once: true, passive: true });
-      });
-    }
-
-    attemptAutoplay() {
-      // If the user manually paused, respect that choice
-      const savedState = sessionStorage.getItem('wedding_music_state');
-      if (savedState === 'paused') {
-        this.updateUIState();
-        return;
-      }
-
-      // Attempt automatic playback
-      const playPromise = this.audio.play();
-      if (playPromise !== undefined) {
-        playPromise
-          .then(() => {
-            this.isPlaying = true;
-            this.updateUIState();
-          })
-          .catch((err) => {
-            console.log('Autoplay deferred until user interaction:', err);
-            this.isPlaying = false;
-            this.updateUIState();
-          });
-      }
-    }
-
-    playAudio() {
-      if (this.webAudioSynth && this.webAudioSynth.playing) {
-        this.webAudioSynth.play();
-        this.isPlaying = true;
-        this.updateUIState();
-        return;
-      }
-
-      const promise = this.audio.play();
-      if (promise !== undefined) {
-        promise
-          .then(() => {
-            this.isPlaying = true;
-            this.updateUIState();
-          })
-          .catch((e) => {
-            console.warn('Play attempt blocked:', e);
-            this.fallbackToSynth();
-          });
-      }
-    }
-
-    pauseAudio() {
-      if (this.audio) {
-        this.audio.pause();
-      }
-      if (this.webAudioSynth) {
-        this.webAudioSynth.pause();
-      }
-      this.isPlaying = false;
-      this.updateUIState();
-    }
-
-    togglePlay() {
-      if (this.isPlaying) {
-        this.pauseAudio();
-      } else {
-        this.playAudio();
-      }
-    }
-
-    updateUIState() {
-      if (!this.musicBars) return;
-      if (this.isPlaying) {
-        this.musicBars.forEach((bar) => bar.classList.remove('paused'));
-        if (this.musicPlayer) {
-          this.musicPlayer.setAttribute('aria-label', 'Pause background music');
-        }
-      } else {
-        this.musicBars.forEach((bar) => bar.classList.add('paused'));
-        if (this.musicPlayer) {
-          this.musicPlayer.setAttribute('aria-label', 'Play background music');
-        }
-      }
-    }
-
-    fallbackToSynth() {
-      if (this.webAudioSynth) return;
-      try {
-        const AudioCtx = window.AudioContext || window.webkitAudioContext;
-        if (!AudioCtx) return;
-        this.audioCtx = new AudioCtx();
-
-        // Gentle Tanpura / Indian chord oscillator synth fallback
-        const masterGain = this.audioCtx.createGain();
-        masterGain.gain.value = 0.15;
-        masterGain.connect(this.audioCtx.destination);
-
-        const freqs = [146.83, 220.00, 293.66, 440.00]; // D, A, D, A notes (Sa-Pa harmony)
-        const oscs = freqs.map(freq => {
-          const osc = this.audioCtx.createOscillator();
-          osc.type = 'sine';
-          osc.frequency.value = freq;
-          osc.connect(masterGain);
-          return osc;
-        });
-
-        this.webAudioSynth = {
-          playing: false,
-          play: () => {
-            if (this.audioCtx.state === 'suspended') {
-              this.audioCtx.resume();
-            }
-            if (!this.webAudioSynth.playing) {
-              oscs.forEach(o => { try { o.start(); } catch(e){} });
-              this.webAudioSynth.playing = true;
-            }
-            masterGain.gain.setTargetAtTime(0.15, this.audioCtx.currentTime, 0.1);
-          },
-          pause: () => {
-            if (this.audioCtx) {
-              masterGain.gain.setTargetAtTime(0.001, this.audioCtx.currentTime, 0.1);
-            }
-            this.webAudioSynth.playing = false;
-          }
-        };
-
         if (this.isPlaying) {
-          this.webAudioSynth.play();
+          sessionStorage.setItem('wedding_music_state', 'playing');
         }
-      } catch (e) {
-        console.error('Synth fallback error:', e);
+      };
+      window.addEventListener('pagehide',     saveState, { capture: true });
+      window.addEventListener('beforeunload', saveState, { capture: true });
+
+      // ── bfcache restore (iOS Safari back swipe) ───────────
+      // When a page is restored from bfcache, pageshow fires with
+      // persisted=true. We must resume audio here because no JS re-runs.
+      window.addEventListener('pageshow', (e) => {
+        if (e.persisted) {
+          // Page was restored from cache — re-sync state
+          this._navigating = false;
+          const state = sessionStorage.getItem('wedding_music_state');
+          const time  = parseFloat(sessionStorage.getItem('wedding_music_time') || '0');
+
+          if (!isNaN(time) && time > 0) {
+            try { this.audio.currentTime = time; } catch(_) {}
+          }
+
+          if (state !== 'paused' && !this.isPlaying) {
+            // Resume via user-gesture unlock if needed
+            this._resumeFromCache();
+          } else if (state === 'paused') {
+            this.isPlaying = false;
+            this._updateUI();
+          }
+        }
+      });
+
+      // ── Unlock autoplay on first user interaction ─────────
+      const unlock = () => {
+        if (!this._userPaused && !this.isPlaying) {
+          this.play();
+        }
+        ['click','touchstart','pointerdown','keydown','scroll'].forEach(evt =>
+          document.removeEventListener(evt, unlock));
+      };
+      ['click','touchstart','pointerdown','keydown','scroll'].forEach(evt =>
+        document.addEventListener(evt, unlock, { once: true, passive: true }));
+    }
+
+    _resumeFromCache() {
+      // On bfcache restore we may still be in a user-gesture context
+      const tryPlay = () => {
+        this.play();
+        ['click','touchstart','pointerdown'].forEach(evt =>
+          document.removeEventListener(evt, tryPlay));
+      };
+      const p = this.audio.play();
+      if (p !== undefined) {
+        p.then(() => {
+          this.isPlaying = true;
+          this._updateUI();
+        }).catch(() => {
+          // Still blocked — wait for next touch
+          ['click','touchstart','pointerdown'].forEach(evt =>
+            document.addEventListener(evt, tryPlay, { once: true, passive: true }));
+        });
+      }
+    }
+
+    /* ── Autoplay attempt on page load ───────────────────── */
+    _attemptAutoplay() {
+      if (this._userPaused) {
+        this.isPlaying = false;
+        this._updateUI();
+        return;
+      }
+      this._initAudioContext();
+      const p = this.audio.play();
+      if (p !== undefined) {
+        p.then(() => {
+          this._fadeIn();
+          this.isPlaying = true;
+          this._updateUI();
+        }).catch(() => {
+          this.isPlaying = false;
+          this._updateUI();
+          // Silently wait for user interaction (handled by unlock listener)
+        });
+      }
+    }
+
+    /* ── Public controls ─────────────────────────────────── */
+    play() {
+      this._initAudioContext();
+      if (this.audioCtx && this.audioCtx.state === 'suspended') {
+        this.audioCtx.resume();
+      }
+      const p = this.audio.play();
+      if (p !== undefined) {
+        p.then(() => {
+          this._fadeIn();
+          this.isPlaying = true;
+          this._userPaused = false;
+          this._updateUI();
+        }).catch(() => {});
+      }
+    }
+
+    pause() {
+      this._fadeOut(0.25);
+      // Delay native pause until fade completes
+      setTimeout(() => {
+        this.audio.pause();
+        this.isPlaying = false;
+        this._userPaused = true;
+        this._updateUI();
+        sessionStorage.setItem('wedding_music_state', 'paused');
+      }, 280);
+    }
+
+    toggle() {
+      if (this.isPlaying) {
+        this.pause();
+      } else {
+        this._userPaused = false;
+        this.play();
+      }
+    }
+
+    /* ── UI state sync ───────────────────────────────────── */
+    _updateUI() {
+      if (!this._bars) return;
+      if (this.isPlaying) {
+        this._bars.forEach(b => b.classList.remove('paused'));
+        this._playerEl?.setAttribute('aria-label', 'Pause background music');
+      } else {
+        this._bars.forEach(b => b.classList.add('paused'));
+        this._playerEl?.setAttribute('aria-label', 'Play background music');
       }
     }
   }
 
-  // Initialize player once DOM is loaded
-  document.addEventListener('DOMContentLoaded', () => {
+  // Init on DOMContentLoaded (or immediately if already ready)
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', () => {
+      window.weddingAudio = new WeddingAudioPlayer();
+    });
+  } else {
     window.weddingAudio = new WeddingAudioPlayer();
-  });
+  }
 })();
