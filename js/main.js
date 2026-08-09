@@ -9,8 +9,9 @@
   'use strict';
 
   // Event Dates for Priya & Vinoth
-  const RECEPTION_DATE = new Date('2026-09-06T18:30:00');
-  const MARRIAGE_DATE  = new Date('2026-09-07T06:00:00');
+  const ENGAGEMENT_DATE = new Date('2026-09-06T13:30:00');
+  const RECEPTION_DATE  = new Date('2026-09-06T18:00:00');
+  const MARRIAGE_DATE   = new Date('2026-09-07T09:00:00');
 
   function pad(n) { return String(n).padStart(2, '0'); }
 
@@ -30,6 +31,8 @@
   }
 
   function tickAllCountdowns() {
+    updateCountdown(ENGAGEMENT_DATE, 'e');
+    updateCountdown(ENGAGEMENT_DATE, 'eng');
     updateCountdown(RECEPTION_DATE, 'rcp');
     updateCountdown(RECEPTION_DATE, 'r');
     updateCountdown(MARRIAGE_DATE, 'mar');

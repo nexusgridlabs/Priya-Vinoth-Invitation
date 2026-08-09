@@ -68,10 +68,11 @@ body {
   position: sticky;
   top: 0;
   z-index: 1000;
-  background: rgba(253, 251, 247, 0.88);
+  background: rgba(253, 251, 247, 0.95);
   backdrop-filter: blur(14px);
   -webkit-backdrop-filter: blur(14px);
   border-bottom: 1px solid var(--border-gold);
+  box-shadow: 0 4px 20px rgba(74, 16, 25, 0.06);
   transition: all 0.3s ease;
 }
 
@@ -79,20 +80,23 @@ body {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 0.75rem 1.5rem;
+  padding: 0.65rem 1.25rem;
   max-width: 1200px;
   margin: 0 auto;
+  flex-wrap: wrap;
+  gap: 0.5rem;
 }
 
 .nav-brand {
   font-family: var(--font-script);
-  font-size: 1.9rem;
+  font-size: 2rem;
   color: var(--primary);
   text-decoration: none;
   font-weight: bold;
   display: flex;
   align-items: center;
-  gap: 0.5rem;
+  gap: 0.4rem;
+  white-space: nowrap;
 }
 
 .nav-brand span.amp {
@@ -103,108 +107,238 @@ body {
 .nav-links {
   display: flex;
   align-items: center;
-  gap: 1.5rem;
+  gap: 0.4rem 0.5rem;
   list-style: none;
   margin: 0;
   padding: 0;
+  flex-wrap: wrap;
+  justify-content: center;
 }
 
 .nav-link-item {
   font-family: var(--font-body);
-  font-size: 0.82rem;
+  font-size: 0.74rem;
   text-transform: uppercase;
-  letter-spacing: 0.15em;
+  letter-spacing: 0.06em;
   color: var(--foreground);
   text-decoration: none;
-  padding: 0.4rem 0.8rem;
-  border-radius: 20px;
-  transition: all 0.25s ease;
-  font-weight: 500;
+  padding: 0.42rem 0.85rem;
+  border-radius: 9999px;
+  transition: all 0.25s cubic-bezier(0.2, 0.8, 0.2, 1);
+  font-weight: 600;
+  white-space: nowrap;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid transparent;
+  line-height: 1.2;
 }
 
-.nav-link-item:hover, .nav-link-item.active {
+.nav-link-item:hover {
   color: var(--primary);
-  background: rgba(197, 155, 39, 0.12);
-  border: 1px solid var(--border-gold);
+  background: rgba(197, 155, 39, 0.15);
+  border-color: var(--border-gold);
+  transform: translateY(-1px);
 }
 
-.nav-badge-marriage {
-  background: var(--gradient-royal);
+/* Distinct, Vibrant, High-Contrast Badges */
+.nav-badge-engagement {
+  background: linear-gradient(135deg, #d35400 0%, #e67e22 100%);
   color: #ffffff !important;
-  box-shadow: 0 4px 12px rgba(122, 28, 40, 0.25);
+  box-shadow: 0 4px 12px rgba(211, 84, 0, 0.35);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  font-weight: 700;
+}
+
+.nav-badge-engagement:hover {
+  background: linear-gradient(135deg, #e67e22 0%, #f39c12 100%);
+  box-shadow: 0 6px 16px rgba(211, 84, 0, 0.45);
 }
 
 .nav-badge-reception {
-  background: var(--gradient-gold);
+  background: linear-gradient(135deg, #d4af37 0%, #f39c12 100%);
+  color: #3b0a11 !important;
+  box-shadow: 0 4px 12px rgba(212, 175, 55, 0.4);
+  font-weight: 700;
+  border: 1px solid rgba(197, 155, 39, 0.3);
+}
+
+.nav-badge-reception:hover {
+  background: linear-gradient(135deg, #f1c40f 0%, #e67e22 100%);
+  box-shadow: 0 6px 16px rgba(212, 175, 55, 0.5);
+}
+
+.nav-badge-marriage {
+  background: linear-gradient(135deg, #7a1c28 0%, #4a1019 100%);
+  color: #ffffff !important;
+  box-shadow: 0 4px 12px rgba(122, 28, 40, 0.35);
+  font-weight: 700;
+  border: 1px solid rgba(255, 255, 255, 0.25);
+}
+
+.nav-badge-marriage:hover {
+  background: linear-gradient(135deg, #9e2a3b 0%, #631420 100%);
+  box-shadow: 0 6px 16px rgba(122, 28, 40, 0.5);
+}
+
+.nav-location-btn {
+  background: rgba(122, 28, 40, 0.06);
   color: var(--primary-dark) !important;
-  box-shadow: var(--shadow-gold);
+  border: 1px solid var(--border-gold);
   font-weight: 600;
 }
 
-/* ── Gold Buttons ── */
+.nav-location-btn:hover {
+  background: var(--primary);
+  color: #ffffff !important;
+  border-color: var(--primary);
+}
+
+
+/* ── Buttons System ── */
 .btn-gold {
-  background: var(--gradient-gold);
-  color: var(--primary-dark);
+  background: linear-gradient(135deg, #e6c667 0%, #c59b27 100%);
+  color: #3b0a11 !important;
   border: 1px solid var(--gold-light);
   border-radius: 9999px;
-  letter-spacing: 0.2em;
-  font-size: 0.78rem;
-  font-weight: 600;
+  letter-spacing: 0.15em;
+  font-size: 0.8rem;
+  font-weight: 700;
   text-transform: uppercase;
-  padding: 0.85rem 2.4rem;
+  padding: 0.85rem 2.2rem;
   transition: all 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
-  box-shadow: var(--shadow-gold);
+  box-shadow: 0 6px 20px rgba(197, 155, 39, 0.35);
   cursor: pointer;
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: 0.5rem;
   text-decoration: none;
+  white-space: nowrap;
 }
 
 .btn-gold:hover {
   transform: translateY(-3px) scale(1.03);
-  box-shadow: 0 12px 28px rgba(197, 155, 39, 0.45);
-  color: var(--primary-dark);
+  box-shadow: 0 12px 28px rgba(197, 155, 39, 0.5);
+  color: #3b0a11 !important;
+  background: linear-gradient(135deg, #f5d77f 0%, #d4af37 100%);
 }
 
 .btn-royal {
-  background: var(--gradient-royal);
-  color: #ffffff;
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  background: linear-gradient(135deg, #7a1c28 0%, #4a1019 100%);
+  color: #ffffff !important;
+  border: 1px solid rgba(255, 255, 255, 0.25);
   border-radius: 9999px;
-  letter-spacing: 0.2em;
-  font-size: 0.78rem;
-  font-weight: 600;
+  letter-spacing: 0.15em;
+  font-size: 0.8rem;
+  font-weight: 700;
   text-transform: uppercase;
-  padding: 0.85rem 2.4rem;
+  padding: 0.85rem 2.2rem;
   transition: all 0.3s ease;
-  box-shadow: 0 8px 24px rgba(122, 28, 40, 0.3);
+  box-shadow: 0 6px 20px rgba(122, 28, 40, 0.35);
   cursor: pointer;
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: 0.5rem;
   text-decoration: none;
+  white-space: nowrap;
 }
 
 .btn-royal:hover {
   transform: translateY(-3px) scale(1.03);
-  box-shadow: 0 12px 28px rgba(122, 28, 40, 0.5);
-  color: #ffffff;
+  box-shadow: 0 12px 28px rgba(122, 28, 40, 0.55);
+  color: #ffffff !important;
+  background: linear-gradient(135deg, #9e2a3b 0%, #5e1420 100%);
+}
+
+.btn-engagement {
+  background: linear-gradient(135deg, #d35400 0%, #e67e22 100%);
+  color: #ffffff !important;
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  border-radius: 9999px;
+  letter-spacing: 0.15em;
+  font-size: 0.8rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  padding: 0.85rem 2.2rem;
+  transition: all 0.3s ease;
+  box-shadow: 0 6px 20px rgba(211, 84, 0, 0.35);
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.btn-engagement:hover {
+  transform: translateY(-3px) scale(1.03);
+  box-shadow: 0 12px 28px rgba(211, 84, 0, 0.5);
+  color: #ffffff !important;
+  background: linear-gradient(135deg, #e67e22 0%, #f39c12 100%);
 }
 
 .btn-outline-gold {
-  background: transparent;
-  color: var(--primary);
-  border: 1.5px solid var(--gold);
+  background: rgba(255, 255, 255, 0.9);
+  color: var(--primary-dark) !important;
+  border: 2px solid var(--gold);
   border-radius: 9999px;
-  letter-spacing: 0.2em;
-  font-size: 0.75rem;
-  font-weight: 600;
+  letter-spacing: 0.15em;
+  font-size: 0.8rem;
+  font-weight: 700;
   text-transform: uppercase;
-  padding: 0.75rem 2rem;
-  transition: all 0.25s ease;
+  padding: 0.85rem 2.2rem;
+  transition: all 0.3s ease;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.btn-outline-gold:hover {
+  background: var(--gold);
+  color: var(--primary-dark) !important;
+  transform: translateY(-3px);
+  box-shadow: 0 8px 24px rgba(197, 155, 39, 0.35);
+}
+
+/* ── Formal Invitation Letter Card ── */
+.invitation-letter-card {
+  background: #ffffff;
+  border: 2px solid var(--gold);
+  border-radius: 24px;
+  box-shadow: 0 20px 50px rgba(122, 28, 40, 0.12);
+  position: relative;
+  overflow: hidden;
+  max-width: 840px;
+}
+
+.invitation-letter-card::before {
+  content: '';
+  position: absolute;
+  inset: 12px;
+  border: 1px dashed var(--gold);
+  border-radius: 16px;
+  pointer-events: none;
+  opacity: 0.6;
+}
+
+.letter-info-box {
+  background: var(--cream);
+  border: 1px solid var(--border-gold);
+  transition: all 0.3s ease;
+}
+
+.letter-info-box:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 10px 20px rgba(197, 155, 39, 0.2);
+  border-color: var(--gold);
+}
   text-decoration: none;
   display: inline-flex;
   align-items: center;
@@ -639,6 +773,22 @@ body {
   box-sizing: border-box;
 }
 
+/* Hero badge – always wrap safely on mobile */
+.page-hero-content .badge {
+  white-space: normal;
+  word-break: break-word;
+  max-width: min(480px, 90vw);
+  line-height: 1.4;
+  display: inline-block;
+}
+
+/* Hero date info box – always fit the viewport */
+.page-hero-content .d-inline-flex {
+  box-sizing: border-box;
+  max-width: min(460px, 92vw);
+  width: auto;
+}
+
 /* ── Marriage Page – Date Badge (responsive) ── */
 .marriage-date-badge {
   display: inline-flex;
@@ -788,23 +938,26 @@ body {
 @media (max-width: 768px) {
   .wedding-nav {
     flex-direction: column;
-    gap: 0.7rem;
-    padding: 0.6rem 1rem;
+    align-items: center;
+    gap: 0.6rem;
+    padding: 0.6rem 0.75rem;
   }
   
   .nav-brand {
-    font-size: 1.6rem;
+    font-size: 1.5rem;
   }
 
   .nav-links {
-    gap: 0.4rem;
+    gap: 0.35rem;
     flex-wrap: wrap;
     justify-content: center;
+    width: 100%;
   }
 
   .nav-link-item {
-    font-size: 0.72rem;
-    padding: 0.35rem 0.7rem;
+    font-size: 0.68rem;
+    padding: 0.35rem 0.65rem;
+    letter-spacing: 0.04em;
   }
 
   .venue-card {
@@ -840,29 +993,54 @@ body {
   }
 
   #music-player {
-    bottom: 1rem;
-    right: 1rem;
-    width: 44px;
-    height: 44px;
+    display: none;
   }
 
-  #music-bars {
-    height: 18px;
-    width: 22px;
+  /* Page-hero badge should not overflow on tablet */
+  .page-hero-content .badge {
+    font-size: 0.65rem;
+    letter-spacing: 0.08em;
+    padding: 0.5rem 1rem;
+  }
+
+  /* Page-hero date info box */
+  .page-hero-content .d-inline-flex {
+    flex-direction: column;
+    gap: 0.5rem !important;
+    padding: 1rem 1.25rem !important;
+    width: 90%;
+    max-width: 360px;
+  }
+
+  .page-hero {
+    min-height: 44vh;
   }
 }
 
 /* Mobile Devices (< 576px) */
 @media (max-width: 576px) {
-  .btn-gold, .btn-royal, .btn-outline-gold {
-    padding: 0.75rem 1.4rem;
+  .btn-gold, .btn-royal, .btn-outline-gold, .btn-engagement {
+    padding: 0.75rem 1.2rem;
     font-size: 0.72rem;
-    letter-spacing: 0.14em;
+    letter-spacing: 0.1em;
     width: 100%;
+    justify-content: center;
   }
 
   .gold-divider {
     margin: 1rem 0;
+  }
+
+  /* Nav pills smaller on phones */
+  .nav-link-item {
+    font-size: 0.63rem;
+    padding: 0.3rem 0.55rem;
+    letter-spacing: 0.03em;
+  }
+
+  /* Stack nav location button on its own line */
+  .nav-location-btn {
+    width: auto;
   }
 }
 
@@ -893,11 +1071,32 @@ body {
   }
 
   .page-hero {
-    min-height: 42vh;
+    min-height: 38vh;
   }
 
   .page-hero-content {
-    padding: 2rem 1rem;
+    padding: 1.75rem 0.75rem;
+  }
+
+  /* Badge wrapping on mobile */
+  .page-hero-content .badge {
+    font-size: 0.6rem;
+    letter-spacing: 0.06em;
+    padding: 0.45rem 0.85rem;
+    max-width: 88vw;
+    line-height: 1.5;
+  }
+
+  /* Hero info box – full width, stacked */
+  .page-hero-content .d-inline-flex {
+    display: flex !important;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.25rem !important;
+    padding: 0.85rem 1rem !important;
+    width: 88vw;
+    max-width: 340px;
+    border-radius: 12px !important;
   }
 
   .countdown-box-grid,
@@ -927,6 +1126,25 @@ body {
   .section-label {
     font-size: 0.68rem;
     letter-spacing: 0.22em;
+  }
+
+  /* Wedding cards in schedule grid */
+  .wedding-card {
+    padding: 1.25rem 1rem !important;
+  }
+
+  /* Event cards full width */
+  .event-card-img-wrapper {
+    height: 180px;
+  }
+
+  /* Invitation letter card */
+  .invitation-letter-card {
+    border-radius: 16px;
+  }
+
+  .invitation-letter-card::before {
+    inset: 8px;
   }
 }
 

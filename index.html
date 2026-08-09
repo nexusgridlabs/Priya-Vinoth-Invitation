@@ -30,9 +30,10 @@
       Vinoth <span class="amp">&amp;</span> Priya
     </a>
     <ul class="nav-links">
-      <li><a href="#reception-section" class="nav-link-item nav-badge-reception">✨ Reception (6 Sept)</a></li>
-      <li><a href="marriage.html" class="nav-link-item nav-badge-marriage">💍 Marriage (7 Sept)</a></li>
-      <li><a href="https://maps.google.com/?q=Kadambur+Mariamman+Mandapam+Madipakkam+Chennai" target="_blank" rel="noopener noreferrer" class="nav-link-item">Get Location</a></li>
+      <li><a href="#engagement-section" class="nav-link-item nav-badge-engagement">💍 Engagement (6 Sept)</a></li>
+      <li><a href="reception.html" class="nav-link-item nav-badge-reception">✨ Reception (6 Sept)</a></li>
+      <li><a href="marriage.html" class="nav-link-item nav-badge-marriage">👑 Marriage (7 Sept)</a></li>
+      <li><a href="https://maps.google.com/?q=Kadambur+Mariamman+Mandapam+Madipakkam+Chennai" target="_blank" rel="noopener noreferrer" class="nav-link-item nav-location-btn">📍 Get Location</a></li>
     </ul>
   </nav>
 </header>
@@ -112,10 +113,11 @@
           "Two souls with but a single thought, two hearts that beat as one. Join us as we step into our beautiful forever."
         </p>
 
-        <div class="d-flex justify-content-center gap-3 mt-4 flex-wrap">
-          <a href="#reception-section" class="btn-gold">Explore Reception ✨</a>
-          <a href="marriage.html" class="btn-royal">Explore Marriage Page 💍</a>
-        </div>
+        <!-- <div class="d-flex justify-content-center gap-3 mt-4 flex-wrap">
+          <a href="#engagement-section" class="btn-engagement">Engagement 💍</a>
+          <a href="reception.html" class="btn-gold">Reception ✨</a>
+          <a href="marriage.html" class="btn-royal">Marriage 👑</a>
+        </div> -->
       </div>
     </div><!-- /#invite-details -->
 
@@ -129,54 +131,120 @@
 <div id="post-hero-sections">
 
   <!-- ═══════════════════════════════════════════════════════
-       RECEPTION HERO BANNER
+       CHRONOLOGICAL EVENTS SHOWCASE
   ═══════════════════════════════════════════════════════ -->
-  <section id="reception-section" class="page-hero">
-    <img src="assets/images/wedding-hero.jpg" alt="Grand Reception Stage" />
+  <section class="py-5" style="background: var(--cream);">
+    <div class="container text-center">
+      <div class="mb-5 scroll-fade-up">
+        <p class="section-label">Celebrations Begin</p>
+        <h2 class="font-script display-3 text-primary">Wedding Events &amp; Schedule</h2>
+        <div class="gold-line"></div>
+      </div>
+
+      <div class="row g-4 justify-content-center">
+
+        <!-- 1. Engagement Card -->
+        <div class="col-md-4">
+          <div class="event-card scroll-fade-up delay-1">
+            <div class="event-card-img-wrapper">
+              <img src="assets/images/wedding-Engagement.png" alt="Engagement Ceremony" />
+              <span class="event-card-badge nav-badge-engagement">Engagement • 6 Sept</span>
+            </div>
+            <div class="event-card-body text-center">
+              <h3 class="font-script fs-2 text-primary mb-1">The Engagement</h3>
+              <p class="font-serif text-gold fw-bold mb-2">Sunday, 6th Sept • 1:30 PM Onwards</p>
+              <p class="text-muted-fg small mb-4">Auspicious Nichayathartham, formal exchange of rings &amp; family blessings.</p>
+              <a href="engagement.html" class="btn-engagement mt-auto">Explore Engagement 💍</a>
+            </div>
+          </div>
+        </div>
+
+        <!-- 2. Reception Card -->
+        <div class="col-md-4">
+          <div class="event-card scroll-fade-up delay-2">
+            <div class="event-card-img-wrapper">
+              <img src="assets/images/wedding-hero.jpg" alt="Grand Reception" />
+              <span class="event-card-badge nav-badge-reception">Reception • 6 Sept</span>
+            </div>
+            <div class="event-card-body text-center">
+              <h3 class="font-script fs-2 text-primary mb-1">The Reception</h3>
+              <p class="font-serif text-gold fw-bold mb-2">Sunday, 6th Sept • 6:00 PM Onwards</p>
+              <p class="text-muted-fg small mb-4">Gala evening festivities, floral stage greetings &amp; grand dinner buffet.</p>
+              <a href="reception.html" class="btn-gold mt-auto">Explore Reception ✨</a>
+            </div>
+          </div>
+        </div>
+
+        <!-- 3. Marriage Card -->
+        <div class="col-md-4">
+          <div class="event-card scroll-fade-up delay-3">
+            <div class="event-card-img-wrapper">
+              <img src="assets/images/vg.png" alt="Sacred Marriage" />
+              <span class="event-card-badge nav-badge-marriage">Marriage • 7 Sept</span>
+            </div>
+            <div class="event-card-body text-center">
+              <h3 class="font-script fs-2 text-primary mb-1">Sacred Marriage</h3>
+              <p class="font-serif text-gold fw-bold mb-2">Monday, 7th Sept • 9:00 AM – 10:00 AM</p>
+              <p class="text-muted-fg small mb-4">Kasi Yatra, Oonjal, Mangalya Dharanam &amp; South Indian wedding feast.</p>
+              <a href="marriage.html" class="btn-royal mt-auto">Explore Marriage 👑</a>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ═══════════════════════════════════════════════════════
+       ENGAGEMENT HERO BANNER SECTION
+  ═══════════════════════════════════════════════════════ -->
+  <section id="engagement-section" class="page-hero">
+    <img src="assets/images/wedding-Engagement.png" alt="Engagement Ceremony Stage" />
     <div class="page-hero-overlay"></div>
 
     <div class="page-hero-content scroll-fade-down">
       <span
-        class="badge nav-badge-reception text-dark px-4 py-2 rounded-pill text-uppercase tracking-widest mb-3 border border-light">
-        Grand Evening Reception
+        class="badge nav-badge-engagement text-white px-4 py-2 rounded-pill text-uppercase tracking-widest mb-3 border border-light">
+        Auspicious Ring Exchange &amp; Nichayathartham
       </span>
-      <h1 class="font-script display-1 text-white mb-2">The Reception</h1>
+      <h1 class="font-script display-1 text-white mb-2">The Engagement</h1>
       <div class="font-serif fs-3 text-gold-light fst-italic">Priya &amp; Vinoth</div>
 
       <div class="d-inline-flex align-items-center gap-3 mt-4 px-3 px-sm-4 py-3 rounded-4 mw-100"
         style="background: rgba(40, 10, 20, 0.85); backdrop-filter: blur(10px); border: 1.5px solid var(--gold); max-width: 100%;">
         <div>
-          <div class="tracking-widest text-uppercase text-gold" style="font-size: 0.75rem;">Reception Date</div>
+          <div class="tracking-widest text-uppercase text-gold" style="font-size: 0.75rem;">Engagement Date &amp; Time</div>
           <div class="font-body fs-4 text-white fw-bold">Sunday, 6th September 2026</div>
-          <div class="text-gold-light" style="font-size: 0.88rem;">6:30 PM Onwards</div>
+          <div class="text-gold-light" style="font-size: 0.88rem;">Timing: 1:30 PM Onwards</div>
         </div>
       </div>
     </div>
   </section>
 
   <!-- ═══════════════════════════════════════════════════════
-       RECEPTION COUNTDOWN
+       ENGAGEMENT COUNTDOWN
   ═══════════════════════════════════════════════════════ -->
   <section class="py-5 scroll-fade-up" style="background: var(--cream);">
     <div class="container text-center">
-      <p class="section-label">Counting Down To The Evening Gala</p>
-      <h2 class="font-script display-4 text-primary">An Evening To Remember</h2>
+      <p class="section-label">Counting Down To The Ring Exchange</p>
+      <h2 class="font-script display-4 text-primary">The Engagement Celebration</h2>
 
       <div class="d-flex flex-wrap justify-content-center gap-3 mt-4">
         <div class="countdown-box scroll-fade-zoom delay-1">
-          <div class="countdown-value" id="r-days">00</div>
+          <div class="countdown-value" id="e-days">00</div>
           <div class="countdown-label">Days</div>
         </div>
         <div class="countdown-box scroll-fade-zoom delay-2">
-          <div class="countdown-value" id="r-hours">00</div>
+          <div class="countdown-value" id="e-hours">00</div>
           <div class="countdown-label">Hours</div>
         </div>
         <div class="countdown-box scroll-fade-zoom delay-3">
-          <div class="countdown-value" id="r-minutes">00</div>
+          <div class="countdown-value" id="e-minutes">00</div>
           <div class="countdown-label">Minutes</div>
         </div>
         <div class="countdown-box scroll-fade-zoom delay-4">
-          <div class="countdown-value" id="r-seconds">00</div>
+          <div class="countdown-value" id="e-seconds">00</div>
           <div class="countdown-label">Seconds</div>
         </div>
       </div>
@@ -184,50 +252,58 @@
   </section>
 
   <!-- ═══════════════════════════════════════════════════════
-       EVENING HIGHLIGHTS & PROGRAM
+       ENGAGEMENT SCHEDULE & RITUALS
   ═══════════════════════════════════════════════════════ -->
   <section class="py-5">
     <div class="container">
       <div class="text-center mb-5 scroll-fade-up">
-        <p class="section-label">Evening Festivities</p>
-        <h2 class="font-script display-3 text-primary">Reception Schedule</h2>
+        <p class="section-label">Ceremonial Schedule</p>
+        <h2 class="font-script display-3 text-primary">Engagement Schedule</h2>
         <div class="gold-line"></div>
       </div>
 
       <div class="row g-4 justify-content-center">
 
-        <div class="col-md-4">
+        <div class="col-md-3 col-sm-6">
           <div class="wedding-card scroll-fade-up delay-1 p-4 text-center h-100">
-            <div class="fs-1 mb-2">🍹</div>
-            <h3 class="font-script fs-2 text-primary">06:30 PM</h3>
-            <h4 class="font-serif fs-4 text-gold mb-2">Welcome Drinks</h4>
+            <div class="fs-1 mb-2">💐</div>
+            <h3 class="font-script fs-2 text-primary">01:30 PM</h3>
+            <h4 class="font-serif fs-5 text-gold mb-2">Guest Welcome</h4>
             <p class="text-muted-fg small">
-              Warm reception welcome with traditional refreshments, rose garland greeting, and soft background
-              instrumental melody.
+              Warm reception with welcome garlands, rose water, and refreshing drinks.
             </p>
           </div>
         </div>
 
-        <div class="col-md-4">
+        <div class="col-md-3 col-sm-6">
           <div class="wedding-card scroll-fade-up delay-2 p-4 text-center h-100">
-            <div class="fs-1 mb-2">👑</div>
-            <h3 class="font-script fs-2 text-primary">07:00 PM</h3>
-            <h4 class="font-serif fs-4 text-gold mb-2">Stage Couple Greeting</h4>
+            <div class="fs-1 mb-2">💍</div>
+            <h3 class="font-script fs-2 text-primary">02:00 PM</h3>
+            <h4 class="font-serif fs-5 text-gold mb-2">Ring Exchange</h4>
             <p class="text-muted-fg small">
-              Grand entry of Priya &amp; Vinoth on the floral stage. Guest greetings, photo opportunities, and flower
-              showers.
+              Formal Nichayathartham, ring exchange &amp; Lagna Patrika reading.
             </p>
           </div>
         </div>
 
-        <div class="col-md-4">
+        <div class="col-md-3 col-sm-6">
           <div class="wedding-card scroll-fade-up delay-3 p-4 text-center h-100">
-            <div class="fs-1 mb-2">🍲</div>
-            <h3 class="font-script fs-2 text-primary">08:00 PM Onwards</h3>
-            <h4 class="font-serif fs-4 text-gold mb-2">Gala Dinner Buffet</h4>
+            <div class="fs-1 mb-2">👑</div>
+            <h3 class="font-script fs-2 text-primary">03:00 PM</h3>
+            <h4 class="font-serif fs-5 text-gold mb-2">Stage Blessings</h4>
             <p class="text-muted-fg small">
-              Extravagant dinner spread featuring authentic South Indian delicacies, live counters, sweets, and dessert
-              buffet.
+              Photography sessions with family, elders &amp; flower showers.
+            </p>
+          </div>
+        </div>
+
+        <div class="col-md-3 col-sm-6">
+          <div class="wedding-card scroll-fade-up delay-4 p-4 text-center h-100">
+            <div class="fs-1 mb-2">☕</div>
+            <h3 class="font-script fs-2 text-primary">03:30 PM</h3>
+            <h4 class="font-serif fs-5 text-gold mb-2">High Tea Feast</h4>
+            <p class="text-muted-fg small">
+              Delightful South Indian savories, celebratory sweets &amp; hot tea/coffee.
             </p>
           </div>
         </div>
@@ -247,8 +323,8 @@
           <h2 class="font-script display-4 text-primary mb-3">Royal Festive Attire</h2>
           <div class="gold-line my-3"></div>
           <p class="font-serif fs-5 text-muted-fg">
-            We invite our dear family and friends to dress up in vibrant traditional attire or formal evening wear for
-            our special celebration night!
+            We invite our dear family and friends to dress up in vibrant traditional attire or elegant pastel wear for
+            our special celebration!
           </p>
         </div>
       </div>
